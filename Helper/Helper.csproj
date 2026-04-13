@@ -99,6 +99,8 @@
     <Compile Include="Components\WebClientEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ConsoleLogBox.cs" />
+    <Compile Include="Controls\ILogWriter.cs" />
     <Compile Include="Magestorm\Arena\Shrine.cs" />
     <Compile Include="Magestorm\Grid\GridObjectDefinition.cs" />
     <Compile Include="Magestorm\Grid\Grid.cs" />

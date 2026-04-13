@@ -1,10 +1,16 @@
-﻿using System;
+﻿using Helper.Timing;
+using MySql.Data.MySqlClient;
+using MageServer.Properties;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using Helper.Timing;
-using MageServer.Properties;
-using MySql.Data.MySqlClient;
+using System.Linq.Expressions;
+using System.Xml.Linq;
+using static MageServer.Character;
+using static MageServer.MySQL;
 
 namespace MageServer
 {
@@ -17,8 +23,71 @@ namespace MageServer
         {
             ConnectionString = String.Format(Resources.Strings_MySQL.ConnectionString, Settings.Default.DatabaseName, Settings.Default.DatabaseHost, Settings.Default.DatabasePort, Settings.Default.DatabaseUsername, Settings.Default.DatabasePassword);
         }
+        public static class Accounts
+        {
+            public static DataTable GetAccountData(String username)
+            {
+                try
+                {
+                    using (MySqlConnection sqlConnection = new MySqlConnection(ConnectionString))
+                    {
+                        sqlConnection.Open();
 
-		public static class ServerSettings
+                        if (sqlConnection.State == ConnectionState.Open)
+                        {
+                            MySqlCommand sqlCommand = new MySqlCommand
+                            {
+                                Connection = sqlConnection,
+                                CommandText = Resources.Strings_MySQL.Query_Select_AccountData
+                            };
+
+                            sqlCommand.Parameters.AddWithValue("@username", username);
+
+                            MySqlDataAdapter sqlAdapter = new MySqlDataAdapter();
+                            DataTable result = new DataTable();
+
+                            sqlAdapter.SelectCommand = sqlCommand;
+                            sqlAdapter.Fill(result);
+
+                            return result;
+                        }
+
+                        throw new Exception(Resources.Strings_MySQL.Error_Connecting);
+                    }
+                }
+                catch (Exception ex)
+                {				
+                    Program.Log(ex.Message, Color.Red);
+                }
+
+                return null;
+            }
+
+            public static bool CreateAccount(string username, string hashedPassword)
+            {
+                try
+                {
+                    using (var conn = new MySqlConnection(ConnectionString))
+                    {
+                        conn.Open();
+                        using (var cmd = new MySqlCommand(
+                            "INSERT INTO accounts (username, password, Admin) VALUES (@username, @password, 0)",
+                            conn))
+                        {
+                            cmd.Parameters.AddWithValue("@username", username);
+                            cmd.Parameters.AddWithValue("@password", hashedPassword);
+                            return cmd.ExecuteNonQuery() > 0;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Program.Log($"CreateAccount error: {ex.Message}", Color.Red);
+                    return false;
+                }
+            }
+        }
+        public static class ServerSettings
 		{
 			public static Boolean SetExpMultiplier(Single expMultiplier)
 			{
@@ -83,7 +152,7 @@ namespace MageServer
 				}
 			}
 
-			public static Boolean SetOnline(Int32 accountId)
+			public static Boolean SetOnline(Int32 accountId, String username)
 			{
 				try
 				{
@@ -100,7 +169,8 @@ namespace MageServer
 							};
 
 							sqlCommand.Parameters.AddWithValue("@accountid", accountId);
-							return sqlCommand.ExecuteNonQuery() >= 1;
+                            sqlCommand.Parameters.AddWithValue("@username", username);
+                            return sqlCommand.ExecuteNonQuery() >= 1;
 						}
 
 						throw new Exception(Resources.Strings_MySQL.Error_Connecting);

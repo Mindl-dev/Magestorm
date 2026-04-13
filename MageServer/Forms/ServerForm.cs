@@ -72,7 +72,7 @@ namespace MageServer.Forms
             {
                 if (MessageBox.Show(@"There are still players connected.  Are you sure you want to exit?", @"Magestorm Server", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification) == DialogResult.Yes)
                 {
-                    Program.ServerForm.MainLog.WriteMessage(@"Server shutting down...", Color.Red);
+                    Program.Log(@"Server shutting down...", Color.Red);
 
                     lock (PlayerManager.Players.SyncRoot)
                     {

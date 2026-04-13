@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MageServer.Properties;
+using MageServer;
+using System;
+using System.Data;
 using System.Drawing;
 using System.Globalization;
-using MageServer.Properties;
 
 namespace MageServer
 {
@@ -49,7 +51,7 @@ namespace MageServer
 
                 try
                 {
-                    NetRequest request = new NetRequest(NetRequestMode.Magestorm, SubscriptionPage, ipAddress, String.Format("u={0}", username), String.Format("p={0}", password));
+                    /*NetRequest request = new NetRequest(NetRequestMode.Magestorm, SubscriptionPage, ipAddress, String.Format("u={0}", username), String.Format("p={0}", password));
 
                     if (!request.Succeeded)
                     {
@@ -91,6 +93,29 @@ namespace MageServer
 
                             break;
                         }
+                    }*/
+
+                    DataTable query = MySQL.Accounts.GetAccountData(username);
+
+                    DataRow accountdata = query.Rows[0];
+                                       
+                    if (PasswordHasher.Verify(password, accountdata["password"].ToString()))
+                    {
+                        if ((int)accountdata["AccountID"] > 0)
+                        {
+                            AccountId = (int)accountdata["AccountID"];
+                            Username = accountdata["username"].ToString();
+                            Admin = (AdminLevel)accountdata["Admin"];
+                            Error = ErrorType.None;
+                        }
+                        else
+                        {
+                            Error = ErrorType.InvalidAccount;
+                        }
+                    }
+                    else
+                    {
+                        Error = ErrorType.InvalidPassword;
                     }
 
                     if (PlayerManager.Players.GetFreePlayerCount() > 100 && (!MagestormPlus && Admin == AdminLevel.None))
@@ -184,7 +209,7 @@ namespace MageServer
             Network.Send(player, GamePacket.Outgoing.Login.Connected(player));
             Network.Send(player, GamePacket.Outgoing.Player.SendPlayerId(player));
 
-			MySQL.OnlineAccounts.SetOnline(player.AccountId);
+			MySQL.OnlineAccounts.SetOnline(player.AccountId, player.Username);
 
             Program.ServerForm.MainLog.WriteMessage(String.Format("(PID: {0}, AID: {1}, S/N: {2}) {3} has connected.", player.PlayerId, player.AccountId, serial, player.Username), Color.MediumSlateBlue);
         }

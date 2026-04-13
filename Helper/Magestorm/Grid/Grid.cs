@@ -171,7 +171,7 @@ namespace Helper
             }
         }
 
-		public static void LoadAllGrids(LogBox logBox)
+		public static void LoadAllGrids(ILogWriter logBox)
 		{
 			String fName = String.Format("{0}\\Arenas.dat", Directory.GetCurrentDirectory());
 			Int32 aCount = NativeMethods.GetPrivateProfileInt32("arenadefs", "numarenas", fName);
