@@ -40,7 +40,7 @@ namespace MageServer
             public readonly ErrorType Error;
             public readonly AdminLevel Admin;
             public readonly String Username;
-            public readonly Boolean MagestormPlus;
+            //public readonly Boolean MagestormPlus;
 
             public AccountData(Player player, String ipAddress, String serial, String username, String password)
             {
@@ -118,10 +118,10 @@ namespace MageServer
                         Error = ErrorType.InvalidPassword;
                     }
 
-                    if (PlayerManager.Players.GetFreePlayerCount() > 100 && (!MagestormPlus && Admin == AdminLevel.None))
+                    /*if (PlayerManager.Players.GetFreePlayerCount() > 100 && (!MagestormPlus && Admin == AdminLevel.None))
                     {
                         Error = ErrorType.ServerFull;
-                    }
+                    }*/
 
                     if (Error == ErrorType.None)
                     {
@@ -188,7 +188,7 @@ namespace MageServer
             player.Serial = serial;
             player.Username = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(accountData.Username);
             player.Admin = accountData.Admin;
-            player.Flags |= accountData.MagestormPlus ? PlayerFlag.MagestormPlus : PlayerFlag.None;
+            //player.Flags |= accountData.MagestormPlus ? PlayerFlag.MagestormPlus : PlayerFlag.None;
 
             if (BitConverter.ToInt32(version, 0) != BitConverter.ToInt32(GameVersion, 0))
             {
@@ -200,7 +200,9 @@ namespace MageServer
                 {
                     Network.Send(player, GamePacket.Outgoing.Login.Error(ErrorType.InvalidVersion));
 
-	                player.DisconnectReason = Resources.Strings_Disconnect.InvalidVersion;
+                    //Program.ServerForm.MainLog.WriteMessage(String.Format("Server Version: {0}, Client Version: {1}", BitConverter.ToInt32(GameVersion, 0), BitConverter.ToInt32(version, 0)), Color.DarkOrange);
+
+                    player.DisconnectReason = Resources.Strings_Disconnect.InvalidVersion;
                     player.Disconnect = true;
                     return;
                 }

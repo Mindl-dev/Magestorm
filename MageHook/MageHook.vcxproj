@@ -42,7 +42,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <LibraryPath>.\Lib;$(LibraryPath)</LibraryPath>
     <OutDir>..\Build\Debug\</OutDir>
     <IncludePath>.\Include;$(IncludePath)</IncludePath>

@@ -138,6 +138,11 @@
     <Compile Include="Timing\TickCounter.cs" />
     <Compile Include="Timing\TimeHelper.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\LogBox.resx">
+      <DependentUpon>LogBox.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

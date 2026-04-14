@@ -143,7 +143,7 @@ namespace MageServer
             MySQL.ServerSettings.SetExpMultiplier(Settings.Default.ExpMultiplier);
 
             Network.Listen();
-            ApiServer.Start();
+            //ApiServer.Start();
         }
 
 
